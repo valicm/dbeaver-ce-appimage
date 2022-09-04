@@ -37,8 +37,7 @@ wget -O $APP_DIRECTORY/dbeaver-ce.tar.gz https://dbeaver.io/files/dbeaver-ce-lat
 echo "==> Extract DBeaver CE"
 cd $APP_DIRECTORY
 tar -xzvf *.tar.gz && rm -r *.tar.gz
-mv dbeaver-ce/dbeaver usr/bin
-rm -rf dbeaver-ce
+mv dbeaver usr/bin
 cd ..
 VERSION=$(cat $DBEAVER_DIRECTORY/.eclipseproduct | sed -n 3p | sed 's/version=//g')
 
