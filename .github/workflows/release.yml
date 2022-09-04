@@ -1,0 +1,42 @@
+name: Build AppImage
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "5 */12 * * *"
+  push:
+    branches:
+      - "main"
+
+jobs:
+  build:
+    name: DBeaver CE AppImage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build DBeaver CE
+        run: |
+          bash build.sh
+          echo "$DBEAVER_CE_VERSION"
+      - name: Check version
+        uses: mukunku/tag-exists-action@v1.0.0
+        id: check_tag
+        with:
+          tag: ${{ env.DBEAVER_CE_VERSION }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload artifact
+        if: ${{ steps.check_tag.outputs.exists }} == "false"
+        uses: actions/upload-artifact@v1
+        with:
+          name: dbeaver-ce.AppImage
+          path: 'dist'
+      - name: Release
+        if: ${{ !steps.check_tag.outputs.exists }} == "false"
+        uses: marvinpinto/action-automatic-releases@latest
+        with:
+          title: DBeaver CE ${{ env.DBEAVER_CE_VERSION }} AppImage
+          automatic_release_tag: ${{ env.DBEAVER_CE_VERSION }}
+          prerelease: false
+          files: |
+            dist/
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
