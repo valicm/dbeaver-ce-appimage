@@ -61,6 +61,6 @@ GH_REPO="$( echo "$GITHUB_REPOSITORY" | grep -o "/.*" | cut -c2- )"
 echo "==> Build DBeaver CE AppImage"
 wget https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
 chmod +x *.AppImage
-ARCH=x86_64 ./appimagetool-x86_64.AppImage --comp gzip "$APP_DIRECTORY" -n -u "gh-releases-zsync|$GH_USER|$GH_REPO|dbeaver-ce|dbeaver-ce*.AppImage.zsync"
+ARCH=x86_64 ./appimagetool-x86_64.AppImage --comp gzip "$APP_DIRECTORY" -n -u "gh-releases-zsync|$GH_USER|$GH_REPO|$DBEAVER_CE_VERSION|dbeaver-ce*.AppImage.zsync"
 mkdir dist
 mv dbeaver-ce*.AppImage* dist/.
