@@ -8,8 +8,24 @@ on:
       - "main"
 
 jobs:
+  version:
+    name: Dbeaver CE AppImage Version
+    runs-on: ubuntu-latest
+    # Map a step output to a job output
+    outputs:
+      create: ${{ steps.check.outputs.create }}
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Check version
+        id: check
+        run: |
+          bash version.sh
   build:
-    name: DBeaver CE AppImage
+    name: DBeaver CE AppImage Build
+    needs: version
+    if: ${{ needs.version.outputs.create == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -17,13 +33,6 @@ jobs:
         run: |
           bash build.sh
           echo "$DBEAVER_CE_VERSION"
-      - name: Check version
-        uses: mukunku/tag-exists-action@v1.0.0
-        id: check_tag
-        with:
-          tag: ${{ env.DBEAVER_CE_VERSION }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload artifact
         if: ${{ steps.check_tag.outputs.exists }} == "false"
         uses: actions/upload-artifact@v1
@@ -34,8 +43,8 @@ jobs:
         if: ${{ !steps.check_tag.outputs.exists }} == "false"
         uses: marvinpinto/action-automatic-releases@latest
         with:
-          title: DBeaver CE ${{ env.DBEAVER_CE_VERSION }} AppImage
-          automatic_release_tag: ${{ env.DBEAVER_CE_VERSION }}
+          title: DBeaver CE AppImage ${{ env.DBEAVER_CE_VERSION }}
+          automatic_release_tag: latest
           prerelease: false
           files: |
             dist/

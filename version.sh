@@ -23,43 +23,20 @@
 
 set -eu
 
-APP_DIRECTORY="AppDir"
-DBEAVER_DIRECTORY=$APP_DIRECTORY/usr/bin
-ICON_DIRECTORY=$APP_DIRECTORY/usr/share/icons/hicolor/256x256/apps
-rm -rf AppDir
-
-mkdir $APP_DIRECTORY
-mkdir -p $ICON_DIRECTORY
-
 echo "==> Download DBeaver CE"
-wget -O $APP_DIRECTORY/dbeaver-ce.tar.gz https://dbeaver.io/files/dbeaver-ce-latest-linux.gtk.x86_64.tar.gz
+wget -O dbeaver-ce.tar.gz https://dbeaver.io/files/dbeaver-ce-latest-linux.gtk.x86_64.tar.gz
 
 echo "==> Extract DBeaver CE"
-cd $APP_DIRECTORY
 tar -xzvf *.tar.gz && rm -r *.tar.gz
-mv dbeaver usr/bin
-cd ..
-VERSION=$(cat $DBEAVER_DIRECTORY/.eclipseproduct | sed -n 3p | sed 's/version=//g')
-
-echo "DBEAVER_CE_VERSION=$VERSION" >> "$GITHUB_ENV"
-
-echo "==> Fetch default AppRun"
-wget -O $APP_DIRECTORY/AppRun https://raw.githubusercontent.com/AppImage/AppImageKit/master/resources/AppRun
-chmod +x $APP_DIRECTORY/AppRun
-
-echo "==> Extract defaults for AppImage"
-# Add defaults which we need for proper app image. Desktop files, icons.
-cp dbeaver-ce.desktop $APP_DIRECTORY/.
-cp $DBEAVER_DIRECTORY/dbeaver.png $APP_DIRECTORY/dbeaver-ce.png
-cp $DBEAVER_DIRECTORY/dbeaver.png $ICON_DIRECTORY/dbeaver-ce.png
+VERSION=$(cat dbeaver/.eclipseproduct | sed -n 3p | sed 's/version=//g')
 
 # Get GitHub user and repo
 GH_USER="$( echo "$GITHUB_REPOSITORY" | grep -o ".*/" | head -c-2 )"
 GH_REPO="$( echo "$GITHUB_REPOSITORY" | grep -o "/.*" | cut -c2- )"
+RELEASE_VERSION=$(gh api -H "Accept: application/vnd.github+json" /repos/"$GH_USER"/"$GH_REPO"/releases/latest | jq -r  ".name" | sed 's/DBeaver CE AppImage //g')
 
-echo "==> Build DBeaver CE AppImage"
-wget https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
-chmod +x *.AppImage
-ARCH=x86_64 ./appimagetool-x86_64.AppImage --comp gzip "$APP_DIRECTORY" -n -u "gh-releases-zsync|$GH_USER|$GH_REPO|$VERSION|dbeaver-ce*.AppImage.zsync"
-mkdir dist
-mv dbeaver-ce*.AppImage* dist/.
+if [ "$VERSION" = "$RELEASE_VERSION" ]; then
+    echo "::set-output name=create::false"
+else
+    echo "::set-output name=create::true"
+fi
