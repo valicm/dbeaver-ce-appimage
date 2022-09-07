@@ -12,7 +12,3 @@ StartupWMClass=DBeaver
 StartupNotify=true
 Keywords=Database;SQL;IDE;JDBC;ODBC;MySQL;PostgreSQL;Oracle;DB2;MariaDB
 MimeType=application/sql
-
-VersionUrl=https://dbeaver.io/files/dbeaver-ce-latest-linux.gtk.x86_64.tar.gz
-VersionFile=.eclipseproduct
-VersionIcon=dbeaver.png
