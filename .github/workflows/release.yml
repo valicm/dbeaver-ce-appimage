@@ -8,42 +8,30 @@ on:
       - "main"
 
 jobs:
-  version:
-    name: Dbeaver CE AppImage Version
+  build:
+    name: Dbeaver CE AppImage
     runs-on: ubuntu-latest
-    # Map a step output to a job output
-    outputs:
-      create: ${{ steps.check.outputs.create }}
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v2
       - name: Check version
-        id: check
+        id: build
         run: |
-          bash version.sh
-  build:
-    name: DBeaver CE AppImage Build
-    needs: version
-    if: ${{ needs.version.outputs.create == 'true' }}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Build DBeaver CE
-        run: |
-          bash build.sh
-          echo "$DBEAVER_CE_VERSION"
+          wget https://raw.githubusercontent.com/valicm/appimage-bash/main/build.sh
+          chmod +x build.sh
+          bash build.sh verify
       - name: Upload artifact
-        if: ${{ steps.check_tag.outputs.exists }} == "false"
+        if: ${{ env.APP_UPDATE_NEEDED == 1 }}
         uses: actions/upload-artifact@v1
         with:
-          name: dbeaver-ce.AppImage
+          name: ${{ env.APP_SHORT_NAME }}.AppImage
           path: 'dist'
       - name: Release
-        if: ${{ !steps.check_tag.outputs.exists }} == "false"
+        if: ${{ env.APP_UPDATE_NEEDED == 1 }}
         uses: marvinpinto/action-automatic-releases@latest
         with:
-          title: DBeaver CE AppImage ${{ env.DBEAVER_CE_VERSION }}
+          title: ${{ env.APP_NAME }} AppImage ${{ env.APP_VERSION }}
           automatic_release_tag: latest
           prerelease: false
           files: |

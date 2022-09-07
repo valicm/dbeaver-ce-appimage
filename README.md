@@ -4,9 +4,11 @@
 
 [![DBeaver CE AppImage release](https://github.com/valicm/dbeaver-ce-appimage/actions/workflows/release.yml/badge.svg?branch=main)](https://github.com/valicm/dbeaver-ce-appimage/actions/workflows/release.yml)
 
-## Get Started
+### Get Started
 
-#### [Download the latest release](https://github.com/valicm/dbeaver-ce-appimage/releases/latest)
+#### [Download the latest stable release](https://github.com/valicm/dbeaver-ce-appimage/releases/latest)
+- stable release only
+- supports update of the AppImage
 
 ### Executing
 #### File Manager
@@ -24,3 +26,7 @@ Use AppImageLauncher for better desktop integration ==> [download AppImageLaunch
 chmod +x dbeaver-ce-*.AppImage
 ./dbeaver-ce-*.AppImage
 ```
+
+#### Build
+The AppImage is built from .tar.gz DBeaver package by GitHub Continuous Integration using this
+bash script https://github.com/valicm/appimage-bash.
