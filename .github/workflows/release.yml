@@ -26,7 +26,7 @@ jobs:
           version_icon: 'dbeaver.png'
       - name: Upload artifact
         if: ${{ env.APP_UPDATE_NEEDED == 'true' }}
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ env.APP_SHORT_NAME }}.AppImage
           path: 'dist'
