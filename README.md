@@ -29,6 +29,6 @@ chmod +x dbeaver-ce-*.AppImage
 
 #### Build
 The AppImage is built from .tar.gz DBeaver package by GitHub Continuous Integration using this
-[Go AppImage packager v2.0.0](https://github.com/valicm/appimage-bash/tree/v2.0.0).
+[Go AppImage packager v2.0.2](https://github.com/valicm/appimage-bash/tree/v2.0.2).
 
 Desktop entry values are defined inline in `.github/workflows/release.yml`; no separate desktop file is required. Builds update `latest`, publish versioned releases, and retain the newest 10 managed versioned releases.
